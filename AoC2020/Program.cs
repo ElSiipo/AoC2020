@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
+﻿using AoCHelper;
 
 namespace AoC_2020_01
 {
@@ -8,7 +6,7 @@ namespace AoC_2020_01
     {
         static void Main(string[] args)
         {
-            Day4.Run();
+            Solver.SolveAll();
         }
     }
 }

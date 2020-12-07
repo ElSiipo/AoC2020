@@ -1,81 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-
-namespace AoC_2020_01
-{
-    public class Day2
-    {
-        public static void RunDay2()
-        {
-            var data = GetData();
-
-            var stopwatch = new Stopwatch();
-            stopwatch.Start();
-            var validPasswordsPart1 = Part1(data);
-            stopwatch.Stop();
-            Console.WriteLine($"Part1: {validPasswordsPart1} {stopwatch.ElapsedMilliseconds} milliseconds {stopwatch.ElapsedTicks}");
-
-            stopwatch.Restart();
-            var validPasswordsPart2 = Part2(data);
-            stopwatch.Stop();
-            Console.WriteLine($"Part2: {validPasswordsPart2} {stopwatch.ElapsedMilliseconds} milliseconds {stopwatch.ElapsedTicks}");
-        }
-
-        private static int Part1(string[] data)
-        {
-            int validPasswords = 0;
-
-            foreach (var line in data)
-            {
-                var splittedLine = SplitOnSpace(line);
-                var minAndMax = splittedLine[0].Split("-").Select(int.Parse).ToArray();
-                var letterToMatch = splittedLine[1].Replace(":", "").ToCharArray()[0];
-                var password = splittedLine[2];
-
-                var occurrances = password.Count(x => x == letterToMatch);
-
-                if (occurrances >= minAndMax[0] && occurrances <= minAndMax[1])
-                {
-                    validPasswords++;
-                }
-            }
-
-            return validPasswords;
-        }
-
-        private static int Part2(string[] data)
-        {
-            int validPasswords = 0;
-
-            foreach (var line in data)
-            {
-                var splittedLine = SplitOnSpace(line);
-                var firstLastIndex = splittedLine[0].Split("-").Select(int.Parse).ToArray();
-                var letterToMatch = splittedLine[1].Replace(":", "").ToCharArray()[0];
-                var password = splittedLine[2];
-
-                firstLastIndex[0]--;
-                firstLastIndex[1]--;
-
-                if (password[firstLastIndex[0]] == letterToMatch ^ password[firstLastIndex[1]] == letterToMatch)
-                {
-                    validPasswords++;
-                }
-            }
-
-            return validPasswords;
-        }
-
-        private static string[] SplitOnSpace(string line)
-        {
-            return line.Split(" ");
-        }
-
-        private static string[] GetData() => @"4-5 l: rllllj
+4-5 l: rllllj
 4-10 s: ssskssphrlpscsxrfsr
 14-18 p: ppppppppppppppppppp
 1-6 z: zzlzvmqbzzclrz
@@ -1074,7 +997,4 @@ namespace AoC_2020_01
 10-11 h: hhhhhhrhhhhhh
 6-7 k: kpvtkkkk
 9-17 b: vbbwhjntdzhbbhmbbq
-6-8 h: hlhhhhrdjncphc".Split(Environment.NewLine);
-
-    }
-}
+6-8 h: hlhhhhrdjncphc

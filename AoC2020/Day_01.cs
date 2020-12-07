@@ -1,48 +1,17 @@
-﻿using System;
+﻿using AoCHelper;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 
 namespace AoC_2020_01
 {
-    public class Day1
+    public class Day_01 : BaseDay
     {
-        public static void RunDay1()
+        private readonly List<int> _input;
+        public Day_01()
         {
-            var stopwatchForeach = new Stopwatch();
-            stopwatchForeach.Start();
-            var resultForeach = ForeachBruteForce();
-            stopwatchForeach.Stop();
-            var elapsed_timeForeach = stopwatchForeach.ElapsedMilliseconds;
-
-            var stopwatchFor = new Stopwatch();
-            stopwatchFor.Start();
-            var resultFor = ForBruteForce();
-            stopwatchFor.Stop();
-            var elapsed_timeFor = stopwatchFor.ElapsedMilliseconds;
-
-            Console.WriteLine($"Foreach: {resultForeach} {elapsed_timeForeach} milliseconds");
-            Console.WriteLine($"For:\t {resultFor} {elapsed_timeFor} milliseconds");
-        }
-
-        private static int ForeachBruteForce()
-        {
-            var data = GetData();
-            foreach (var firstVal in data)
-            {
-                foreach (var secondVal in data)
-                {
-                    foreach (var thirdVal in data)
-                    {
-                        if (firstVal + secondVal + thirdVal == 2020)
-                        {
-                            return firstVal * secondVal * thirdVal;
-                        }
-                    }
-                }
-            }
-
-            return 0;
+            _input = GetData();
         }
 
         private static int ForBruteForce()
@@ -270,6 +239,30 @@ namespace AoC_2020_01
                 1641,
                 1760
             };
+        }
+
+        public override string Solve_1()
+        {
+            return "Not solved?";
+        }
+
+        public override string Solve_2()
+        {
+            for (int i = 0; i < _input.Count; i++)
+            {
+                for (int j = i + 1; j < _input.Count; j++)
+                {
+                    for (int k = j + 1; k < _input.Count; k++)
+                    {
+                        if (_input[i] + _input[j] + _input[k] == 2020)
+                        {
+                            return (_input[i] * _input[j] * _input[k]).ToString();
+                        }
+                    }
+                }
+            }
+
+            return 0.ToString();
         }
     }
 }
