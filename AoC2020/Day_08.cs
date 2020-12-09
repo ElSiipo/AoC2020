@@ -8,96 +8,102 @@ namespace AoC_2020_01
 {
     public class Day_08 : BaseDay
     {
-        private readonly string[] _input;
+        private readonly Instruction[] _input;
 
         public Day_08()
         {
             _input = File
                 .ReadAllText(@"..\..\..\08.txt")
-                .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries);
+                .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
+                .Select(x => ParseInput(x))
+                .ToArray();
+        }
+
+        private static Instruction ParseInput(string s)
+        {
+            var verb = s[..3];
+            var argument = int.Parse(s[4..]);
+            var instruction = new Instruction { Verb = Enum.Parse<Instructions>(verb), Argument = argument };
+            return instruction;
         }
 
         public override string Solve_1()
         {
-            (long accumulator, bool ranTwice) = RunBootCode(_input);
-
             // Correct: 1553
+            (long accumulator, _) = RunBootCode(_input);
             return accumulator.ToString();
         }
 
         public override string Solve_2()
         {
-            long correctAccumulator = 0;
-            for(int i = 0; i < _input.Length; i++)
+            long accumulator = 0;
+
+            var modifiableInstructions = _input
+                .Select((inst, idx) => new { idx, inst })
+                .Where(x => x.inst.Verb == Instructions.jmp || x.inst.Verb == Instructions.nop)
+                .Select(x => x.idx);
+
+            foreach(var i in modifiableInstructions) 
             {
-                string[] tempInput = new string[_input.Length];
-                _input.CopyTo(tempInput, 0);
+                var successful = false;
+                _input[i].Verb = (Instructions)((int)_input[i].Verb * -1);
 
-                if (tempInput[i].Contains("jmp"))
-                    tempInput[i] = tempInput[i].Replace("jmp", "nop");
+                (accumulator, successful) = RunBootCode(_input);
 
-                (long accumulator, bool ranTwice) = RunBootCode(tempInput);
-
-                if (!ranTwice)
+                if (successful)
                 {
-                    correctAccumulator = accumulator;
                     break;
                 }
+
+                _input[i].Verb = (Instructions)((int)_input[i].Verb * -1);
             }
 
-            for (int i = 0; i < _input.Length; i++)
-            {
-                string[] tempInput = new string[_input.Length];
-                _input.CopyTo(tempInput, 0);
-
-                if (tempInput[i].Contains("nop"))
-                    tempInput[i] = tempInput[i].Replace("nop", "jmp");
-
-                (long accumulator, bool ranTwice) = RunBootCode(tempInput);
-
-                if (!ranTwice)
-                {
-                    correctAccumulator = accumulator;
-                    break;
-                }
-            }
-
-            return correctAccumulator.ToString();
+            // Correct: 1877
+            return accumulator.ToString();
         }
 
-        private static (long, bool) RunBootCode(string[] operations)
+        private static (long, bool) RunBootCode(Instruction[] instructions)
         {
             Dictionary<string, int> tableOfOperations = new Dictionary<string, int>();
             long accumulator = 0;
-            bool instructionRanTwice = false;
+            bool successful = true;
 
-            for (int index = 0; index < operations.Length; index++)
+            for (int index = 0; index < instructions.Length; index++)
             {
-                var instruction = operations[index][..3];
-                var value = int.Parse(operations[index][4..]);
-
-                if (tableOfOperations.ContainsKey($"{index}:{operations[index]}"))
+                if (tableOfOperations.ContainsKey($"{index}:{instructions[index].Verb}"))
                 {
-                    instructionRanTwice = true;
+                    successful = false;
                     break;
                 }
 
-                tableOfOperations.Add($"{index}:{operations[index]}", value);
+                tableOfOperations.Add($"{index}:{instructions[index].Verb}", instructions[index].Argument);
 
-                switch (instruction)
+                switch (instructions[index].Verb)
                 {
-                    case "acc":
-                        accumulator += value;
+                    case Instructions.acc:
+                        accumulator += instructions[index].Argument;
                         continue;
-                    case "jmp":
-                        index += --value;
+                    case Instructions.jmp:
+                        index += instructions[index].Argument - 1;
                         continue;
                     default:
                         continue;
                 }
             }
 
-            return (accumulator, instructionRanTwice);
+            return (accumulator, successful);
+        }
+
+        private class Instruction
+        {
+            public Instructions Verb { get; set; }
+            public int Argument { get; set; }
+        }
+        private enum Instructions
+        {
+            nop = -1,
+            acc = 0,
+            jmp = 1
         }
     }
 }

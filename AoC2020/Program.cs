@@ -6,7 +6,7 @@ namespace AoC_2020_01
     {
         static void Main(string[] args)
         {
-            Solver.SolveLast();
+            Solver.Solve<Day_09>();
         }
     }
 }
