@@ -9,6 +9,7 @@ namespace AoC_2020_01
     public class Day_09 : BaseDay
     {
         private readonly long[] _input;
+        private long faultyValue = 0;
 
         public Day_09()
         {
@@ -55,6 +56,7 @@ namespace AoC_2020_01
             }
 
             // Answer: 36845998
+            faultyValue = 36845998;
             return valueToTry.ToString();
         }
         
@@ -66,10 +68,13 @@ namespace AoC_2020_01
                 {
                     var values = _input[preamble..i];
 
-                    if (values.Sum() == 36845998)
+                    var sum = values.Sum();
+                    if (sum == faultyValue)
                     {
                         return (values.Min() + values.Max()).ToString();
                     }
+                    if (sum > faultyValue)
+                        break;
                 }
             }
 
