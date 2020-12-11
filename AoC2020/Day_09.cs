@@ -1,6 +1,5 @@
 ﻿using AoCHelper;
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 
@@ -10,6 +9,7 @@ namespace AoC_2020_01
     {
         private readonly long[] _input;
         private long faultyValue = 0;
+        private int startIndex = 0;
 
         public Day_09()
         {
@@ -23,20 +23,19 @@ namespace AoC_2020_01
         public override string Solve_1()
         {
             int preamble = 25;
-            int taken = 0;
             long valueToTry = 0;
 
-            while (taken < _input.Length)
+            while (startIndex < _input.Length)
             {
                 bool isValid = false;
-                int to = taken + preamble;
-                var values = _input[taken..to];
+                int to = startIndex + preamble;
+                var values = _input[startIndex..to];
 
                 valueToTry = _input.ElementAt(to);
 
-                for (long i = 0; i < values.Length; i++)
+                for (int i = 0; i < values.Length; i++)
                 {
-                    for (long j = i + 1; j < values.Length; j++)
+                    for (int j = i + 1; j < values.Length; j++)
                     {
                         if (values[i] + values[j] == valueToTry)
                         {
@@ -52,21 +51,21 @@ namespace AoC_2020_01
                 if (!isValid)
                     break;
 
-                taken++;
+                startIndex++;
             }
 
             // Answer: 36845998
-            faultyValue = 36845998;
+            faultyValue = valueToTry;
             return valueToTry.ToString();
         }
         
         public override string Solve_2()
         {
-            for (int preamble = 2; preamble < _input.Length; preamble++)
+            for (int begin = startIndex; begin >= 0; begin--)
             {
-                for (int i = preamble +1; i < _input.Length; i++)
+                for (int end = begin + 2; end < _input.Length; end++)
                 {
-                    var values = _input[preamble..i];
+                    var values = _input[begin..end];
 
                     var sum = values.Sum();
                     if (sum == faultyValue)
